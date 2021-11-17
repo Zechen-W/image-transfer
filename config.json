@@ -1,0 +1,14 @@
+{
+    "cuda": [1, 2],
+    "batch_size": 128,
+    "learning_rate": 0.001,
+    "num_epochs": 50,
+    "patience": 50,
+    "dataset_path": "./data/CIFAR/",
+    "channel_type": "awgn",
+    "channel_param": -2,
+    "output_dir": "./output/",
+    "encoder_complex":512,
+    "trainable_part": 1,
+    "pretrained_model": "./output/best.th"
+}
