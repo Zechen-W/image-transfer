@@ -2,6 +2,7 @@
 import torch.nn as nn
 import numpy as np
 from typing import Union
+from resnet import resnet50
 
 
 class Encoder(nn.Module):
@@ -120,9 +121,8 @@ class Decoder(nn.Module):
         x = self.upconv_block1(x)
         x = self.upconv_block2(x)
         x = self.upconv_block3(x)
-        out = self.upconv_block4(x)
-
-        return out
+        x = self.upconv_block4(x)
+        return x
 
 
 class Classifier(nn.Module):
@@ -143,6 +143,17 @@ class Classifier(nn.Module):
         return x
 
 
+class Normalizer(nn.Module):
+    def __init__(self):
+        super(Normalizer, self).__init__()
+
+    def forward(self, x: torch.Tensor):
+        batch_size = x.shape[0]
+        max_rgb = torch.max(x.reshape(batch_size, 3, 32 * 32), -1)[0]
+        x = x.T.div(max_rgb.T).T
+        return x
+
+
 class WZCModel(torch.nn.Module):
     def __init__(self, K: int,
                  channel_type: str,
@@ -153,7 +164,8 @@ class WZCModel(torch.nn.Module):
         self.encoder = Encoder(K)
         self.channel = Channel(channel_type, channel_param)
         self.decoder = Decoder(K)
-        self.classifier = Classifier()
+        self.normalizer = Normalizer()
+        self.classifier = resnet50()
         self.distortion_loss = torch.nn.MSELoss()
         self.classify_loss = torch.nn.CrossEntropyLoss()
         self.trainable_part = trainable_part
@@ -163,7 +175,7 @@ class WZCModel(torch.nn.Module):
         if self.trainable_part == 1:
             feature = self.encoder(input_image)
             noisy_feature = self.channel(feature)
-            recover_image = self.decoder(noisy_feature)
+            recover_image = self.normalizer(self.decoder(noisy_feature))
             classify_out = self.classifier(recover_image)
             distortion_loss = self.distortion_loss(input_image, recover_image)
 
@@ -172,7 +184,7 @@ class WZCModel(torch.nn.Module):
             with torch.no_grad():
                 feature = self.encoder(input_image)
                 noisy_feature = self.channel(feature)
-                recover_image = self.decoder(noisy_feature)
+                recover_image = self.normalizer(self.decoder(noisy_feature))
             classify_out = self.classifier(recover_image)
             classify_loss = self.classify_loss(classify_out, label)
             return recover_image, classify_out, classify_loss

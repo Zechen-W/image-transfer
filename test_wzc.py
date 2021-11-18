@@ -1,5 +1,3 @@
-import torch
-from models import WZCModel
 import json
 import os
 import torch
@@ -42,11 +40,7 @@ def main():
                 if i > 100:
                     break
                 plt.imsave(f'./figs/bef{i}.jpg', bef.T.transpose(0, 1).cpu().numpy())
-                try:
-                    plt.imsave(f'./figs/aft{i}.jpg', aft.T.transpose(0, 1).cpu().numpy())
-                except ValueError:
-                    errcnt += 1
-                i += 1
+                plt.imsave(f'./figs/aft{i}.jpg', aft.T.transpose(0, 1).cpu().numpy())
 
 
 if __name__ == '__main__':
