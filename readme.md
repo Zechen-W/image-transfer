@@ -13,3 +13,4 @@
   - [ ] recover image normalization
   - [ ] partition dataset: train, valid, test
   - [ ] save last _n_ models
+  - [ ] rebuild classification network: better use SOTA model
