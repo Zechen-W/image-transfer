@@ -8,3 +8,8 @@
   - encoder_complex: 图像编码后序列长度。此参数取512时压缩率r=1/6.
   - trainable_part: 训练模型的哪个部分。取值为1或2。第一部分为编解码部分，第二部分为分类器。由于是不同的任务，
   所以分开训练。
+- to do:
+  - [ ] multi gpu or cpu adaption
+  - [ ] recover image normalization
+  - [ ] partition dataset: train, valid, test
+  - [ ] save last _n_ models
