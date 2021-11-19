@@ -7,11 +7,11 @@ os.environ['CUDA_VISIBLE_DEVICE'] = args['cuda']
 
 import torch
 from models import WZCModel
-from torchvision import datasets, transforms
+from torchvision import transforms
 from torch.utils.data import DataLoader
 import pdb
 import re
-import time
+from datasets import WzcDataset
 
 
 def main():
@@ -22,16 +22,11 @@ def main():
     transform = transforms.Compose(
         [transforms.ToTensor(),
          transforms.Normalize((0, 0, 0), (1, 1, 1))])
-    data1 = datasets.CIFAR10(root=args['dataset_path'], train=True, download=False, transform=transform)
-    data2 = datasets.CIFAR10(root=args['dataset_path'], train=False, download=False, transform=transform)
-    # all_data = list(data1 + data2)
-    # n_data = len(data1 + data2)
-    # pdb.set_trace()
-    # train_loader = DataLoader(all_data[:int(.8 * n_data)], batch_size=args['batch_size'], shuffle=False)
-    # valid_loader = DataLoader(all_data[int(.8 * n_data):int(.9 * n_data)], batch_size=args['batch_size'], shuffle=False)
-    # test_loader = DataLoader(all_data[int(.9 * n_data):], batch_size=args['batch_size'], shuffle=False)
-    train_loader = DataLoader(data1, batch_size=args['batch_size'], shuffle=False)
-    valid_loader = DataLoader(data2, batch_size=args['batch_size'], shuffle=False)
+    train_data = WzcDataset(args['dataset_path'], 'train', transform=transform)
+    valid_data = WzcDataset(args['dataset_path'], 'valid', transform=transform)
+
+    train_loader = DataLoader(train_data, batch_size=args['batch_size'], shuffle=True)
+    valid_loader = DataLoader(valid_data, batch_size=args['batch_size'], shuffle=True)
     model = WZCModel(K=args['encoder_complex'],
                      channel_type=args['channel_type'],
                      channel_param=args['channel_param'],
@@ -75,7 +70,7 @@ def main():
                 print(f'Train Epoch : {epoch:02} [{batch_i:4}/{n_batch:4} ({100. * batch_i / n_batch:3.0f}%)] '
                       f'loss:{loss.sum() / args["batch_size"]:.6f}')
 
-        print(f"average loss on train set: {sumLoss / 50000:.6f}")
+        print(f"average loss on train set: {sumLoss / len(train_data)}")
 
         # evaluating
         model.eval()
@@ -115,9 +110,9 @@ def main():
             else:
                 patience_timer += 1
 
-            if patience_timer == patience:
-                print('run out of patience, early stopping')
-                break
+        if patience_timer == patience:
+            print('run out of patience, early stopping')
+            break
 
 
 if __name__ == '__main__':

@@ -8,13 +8,18 @@
   - channel_param: 信噪比SNR。改变此参数不必要重新训练模型。
   - encoder_complex: 图像编码后序列长度。此参数取512时压缩率r=1/6.
   - trainable_part: 训练模型的哪个部分。取值为1或2。第一部分为编解码部分，第二部分为分类器。由于是不同的任务，
-  所以分开训练。
+  所以分开训练。在测试时应指定为1以便计算PSNR。
+  - pretrained_model: 预训练的模型，应为模型的参数文件的路径。当重新训练时此项取空字符串。
 - to do:
   - [x] multi gpu or cpu adaption
   - [x] recover image normalization
-  - [ ] partition dataset: train, valid, test
+  - [x] partition dataset: train, valid, test
   - [ ] save last _n_ models
   - [x] rebuild classification network: better use SOTA model
+  - [ ] add log
 - thanks to:
   - https://github.com/weiaicunzai/pytorch-cifar100 , where ResNet used in this project comes from.
 
+- 注意： 
+
+  在测试时，由于PSNR相对于MSE是下凸函数，在PSNR上平均会比在MSE上平均得到的测量指标高。这里为了数据好看，在PSNR上取平均。
