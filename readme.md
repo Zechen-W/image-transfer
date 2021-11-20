@@ -24,12 +24,16 @@
   Suppose you didn't change the _name_ field, then you should activate your environment via this command:  
   `source activate wzc`
   ### 3. Train the model.  
-  Custom the _config.json_ file according to the instruction above. First set _trainable_part_ to
+  Customize the _config.json_ file according to the instruction above. First set _trainable_part_ to
   _1_, set _pretrained_model_ to ""(a null string) and run `python train_wzc.py` to train the first part of the model, which is also known as
-  the encoder and decoder part. Next you set _trainable_part_ to _2_, set _pretrained_model_ to the path referring to 
+  the encoder and decoder part.  
+
+  Next you set _trainable_part_ to _2_, set _pretrained_model_ to the path referring to 
   the model state dict file which should be named _best.th_ in the _output_dir_ directory,
   and run `python train_wzc.py`. The 
-  difference is that this time you will train the classifier part. Note that during the above 2
+  difference is that this time you will train the classifier part. 
+  
+  Note that during the above 2
   steps, if you want to get some satisfying or even SOTA evaluation results on test set, you may 
   have to apply some training tricks such as alter the _learning_rate_ or _channel_param_ sometimes
   in the process of training.
@@ -39,6 +43,8 @@
   printed. To get PSNR under different SNR conditions, change _channel_param_ in _config.json_ and run
   `python test_wzc.py` repeatedly. 
   
+
+---
 - to do:
   - [x] multi gpu or cpu adaption
   - [x] recover image normalization
