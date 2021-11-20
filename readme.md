@@ -14,16 +14,16 @@
   - test_fig_output_dir: _test.py_ 输出图像的目录。
   - n_test_output_fig: _test.py_ 输出图像的数目。
 # Quick Start
-  ###1. Clone this repo.  
+  ### 1. Clone this repo.  
   With git, run `git clone https://github.com/Zechen-W/image-transfer.git`;  
   or alternatively, download and unzip the code via GitHub.
-  ###2. Configure the environment.  
+  ### 2. Configure the environment.  
   First customize the information in *requirements.yaml*, such as _name_ and _prefix_.
   Then in commend line, run this command:  
   `conda env create -f requirements.yaml`  
   Suppose you didn't change the _name_ field, then you should activate your environment via this command:  
   `source activate wzc`
-  ###3. Train the model.  
+  ### 3. Train the model.  
   Custom the _config.json_ file according to the instruction above. First set _trainable_part_ to
   _1_, set _pretrained_model_ to ""(a null string) and run `python train_wzc.py` to train the first part of the model, which is also known as
   the encoder and decoder part. Next you set _trainable_part_ to _2_, set _pretrained_model_ to the path referring to 
@@ -33,7 +33,7 @@
   steps, if you want to get some satisfying or even SOTA evaluation results on test set, you may 
   have to apply some training tricks such as alter the _learning_rate_ or _channel_param_ sometimes
   in the process of training.
-  ###4. Evaluating the model on the test set.
+  ### 4. Evaluating the model on the test set.
   Set _pretrained_model_ to the model file directory and make other necessary changes to _config.json_.
   Run `python test_wzc.py`. The processed and the raw images will be generated, and the PSNR metric will be
   printed. To get PSNR under different SNR conditions, change _channel_param_ in _config.json_ and run
