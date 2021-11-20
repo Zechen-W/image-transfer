@@ -3,11 +3,11 @@ import os
 
 with open('./config.json', encoding='utf8') as r:
     args = json.load(r)
-os.environ['CUDA_VISIBLE_DEVICE'] = args['cuda']
+os.environ['CUDA_VISIBLE_DEVICES'] = args['cuda']
 
 import torch
 from models import WZCModel
-from torchvision import transforms
+from torchvision import transforms, models
 from torch.utils.data import DataLoader
 import pdb
 import re
@@ -15,6 +15,8 @@ from datasets import WzcDataset
 
 
 def main():
+    if not os.path.isdir(args['output_dir']):
+        os.mkdir(args['output_dir'])
     with open(os.path.join(args['output_dir'], 'config.json'), 'w') as w:
         json.dump(args, w, indent=4)
 
@@ -80,16 +82,17 @@ def main():
             for images, labels in valid_loader:
                 images, labels = images.to(device), labels.to(device)
                 clf_outputs, losses = model(images, labels)[1:]
+
                 # calculate acc
                 y_hat = clf_outputs.argmax(dim=-1)
-                eval_correct = (y_hat == labels.cuda()).sum()
+                eval_correct = (y_hat == labels).sum()
                 eval_acc += eval_correct.item()
 
                 # calculate loss
                 eval_loss += losses.sum()
-
-        eval_acc /= len(valid_loader)
-        eval_loss /= len(valid_loader)
+        # pdb.set_trace()
+        eval_acc /= len(valid_data)
+        eval_loss /= len(valid_data)
         print(f'eval_acc: {eval_acc}, eval_loss: {eval_loss}')
 
         # save model and early stop

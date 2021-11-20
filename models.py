@@ -1,8 +1,8 @@
-﻿import torch
+﻿from torchvision.models import resnet50
+import torch
 import torch.nn as nn
 import numpy as np
 from typing import Union
-from resnet import resnet50
 
 
 class Encoder(nn.Module):
@@ -165,7 +165,8 @@ class WZCModel(torch.nn.Module):
         self.channel = Channel(channel_type, channel_param)
         self.decoder = Decoder(K)
         self.normalizer = Normalizer()
-        self.classifier = resnet50()
+        self.classifier = torch.nn.Sequential(resnet50(pretrained=trainable_part == 1),
+                                              torch.nn.Linear(1000, 10))
         self.distortion_loss = torch.nn.MSELoss()
         self.classify_loss = torch.nn.CrossEntropyLoss()
         self.trainable_part = trainable_part
@@ -176,7 +177,7 @@ class WZCModel(torch.nn.Module):
             feature = self.encoder(input_image)
             noisy_feature = self.channel(feature)
             recover_image = self.normalizer(self.decoder(noisy_feature))
-            classify_out = self.classifier(recover_image)
+            classify_out = torch.softmax(self.classifier(recover_image), 0)
             distortion_loss = self.distortion_loss(input_image, recover_image)
 
             return recover_image, classify_out, distortion_loss

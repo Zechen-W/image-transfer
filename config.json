@@ -1,18 +1,16 @@
 {
     "cuda": "0, 1, 2",
     "batch_size": 128,
-    "learning_rate": 0.001,
+    "learning_rate": 0.05,
     "num_epochs": 100,
     "patience": 3,
     "dataset_path": "./data/CIFAR/cifar-10-batches-py",
     "channel_type": "awgn",
-    "channel_param": -2,
-    "output_dir": "./output/",
+    "channel_param": 10,
+    "output_dir": "./outputt/",
     "encoder_complex":512,
     "trainable_part": 1,
-    "pretrained_model": "",
-    "test_args": {
-        "n_output_fig": 100,
-        "output_fig_dir": "./figs"
-    }
+    "pretrained_model": "./outputt/best.th",
+    "test_fig_output_dir": "./figs",
+    "n_test_output_fig": 100
 }

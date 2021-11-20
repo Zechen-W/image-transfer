@@ -21,29 +21,29 @@ class WzcDataset(Dataset):
         labels = []
         filenames = ['data_batch_1', 'data_batch_2', 'data_batch_3', 'data_batch_4', 'data_batch_5', 'test_batch']
 
+        for filename in filenames:
+            batch_data = unpickle(os.path.join(root, filename))
+            data.append(batch_data[b'data'])
+            labels.extend(batch_data[b'labels'])
+        data = np.vstack(data).reshape((-1, 3, 32, 32))
+        data = data.transpose((0, 2, 3, 1))
+
+        np.random.seed(666)
+        np.random.shuffle(data)
+        np.random.shuffle(data)
+        np.random.seed(666)
+        np.random.shuffle(labels)
+        np.random.shuffle(labels)
+
         if dataset_type == 'train':
-            for filename in filenames[:5]:
-                batch_data = unpickle(os.path.join(root, filename))
-                data.append(batch_data[b'data'])
-                labels.extend(batch_data[b'labels'])
-
-            data = np.vstack(data).reshape((-1, 3, 32, 32))
-            data = data.transpose((0, 2, 3, 1))
-
-            self.data, self.labels = data[:48000], labels[:48000]
+            self.data = data[:48000]
+            self.labels = labels[:48000]
+        elif dataset_type == 'valid':
+            self.data = data[48000:54000]
+            self.labels = labels[48000:54000]
         else:
-            for filename in filenames[-2:]:
-                batch_data = unpickle(os.path.join(root, filename))
-                data.append(batch_data[b'data'])
-                labels.extend(batch_data[b'labels'])
-
-            data = np.vstack(data).reshape((-1, 3, 32, 32))
-            data = data.transpose((0, 2, 3, 1))
-
-            if dataset_type == 'valid':
-                self.data, self.labels = data[8000:14000], labels[8000:14000]
-            else:
-                self.data, self.labels = data[-6000:], labels[-6000:]
+            self.data = data[54000:]
+            self.labels = labels[54000:]
 
     def __len__(self):
         return len(self.data)
